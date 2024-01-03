@@ -21,67 +21,37 @@ model User {
   updatedAt     DateTime @updatedAt
 }
 
-model UserKlien {
-  id            String   @id @default(uuid())
-  nama_lengkap  String
-  tanggal_lahir DateTime @db.Date
-  alamat        String
-  no_hp         String
-  password      String
-  nik           String
-  refresh_token String?  @default(dbgenerated("null")) @db.Text
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
-
-  likes Like[]
+model News {
+  news_id       String      @id @default(uuid())
+  title         String
+  content       String
+  author        String
+  category      String
+  thumbnail     String
+  source        String
+  createdAt     DateTime   @default(now())
+  updatedAt     DateTime   @updatedAt
 }
 
-model Post {
-  id           Int      @id @default(autoincrement())
-  title        String
-  content      String
-  imageUrl     String
-  views        Int      @default(0)
-  status       Boolean  @default(false)
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
-  likesCount   Int      @default(0)
-  unlikesCount Int      @default(0)
-
-  likes Like[]
+model Destination {
+  destination_id String    @id @default(uuid())
+  name           String
+  description    String
+  location       String
+  image          String
+  category       String
+  created_at     DateTime   @default(now())
+  updated_at     DateTime   @updatedAt
 }
 
-model Like {
-  id        Int      @id @default(autoincrement())
-  type      String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  userId String
-  user   UserKlien @relation(fields: [userId], references: [id])
-
-  postId Int
-  post   Post @relation(fields: [postId], references: [id])
-
-  @@unique([userId, postId])
-}
-
-model Menu {
-  menu_id     Int       @id @default(autoincrement())
-  menu_name   String
-  menu_url    String
-  menu_status Boolean   @default(false)
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
-  subMenus    SubMenu[]
-}
-
-model SubMenu {
-  subMenu_id   Int      @id @default(autoincrement())
-  subMenu_name String
-  subMenu_url  String
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
-  menu_id      Int?
-  menu         Menu?    @relation(fields: [menu_id], references: [menu_id])
+model LetterRequest {
+  request_id     String    @id @default(uuid())
+  requester_name String
+  requester_nik  String
+  letter_type    String
+  purpose        String
+  status         String
+  pdf_file       String?   // Field to store the path or URL of the PDF file
+  submitted_at   DateTime   @default(now())
+  updated_at     DateTime   @updatedAt
 }

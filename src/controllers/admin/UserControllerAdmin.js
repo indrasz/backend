@@ -91,7 +91,7 @@ export const loginUser = async (req, res) => {
     const pwd = req.body.password;
 
     if (!usr && !pwd)
-      res.status(400).json({ msg: "Username dan Passowrd tidak boleh kosong" });
+      res.status(400).json({ msg: "Username dan Password tidak boleh kosong" });
     else if (!usr) res.status(400).json({ msg: "Username tidak boleh kosong" });
     else if (!pwd) res.status(400).json({ msg: "Password tidak boleh kosong" });
 
@@ -148,6 +148,37 @@ export const loginUser = async (req, res) => {
     console.log({ msg: error.message, response: error.response });
   }
 };
+
+// export const loginUser = async (req, res) => {
+//   try {
+//     const { username, password } = req.body;
+
+//     if (!username || !password) {
+//       return res.status(400).json({ msg: "Username dan password harus diisi" });
+//     }
+
+//     const user = await prisma.user.findFirst({
+//       where: {
+//         username,
+//       },
+//     });
+
+//     if (!user) {
+//       return res.status(401).json({ msg: "Username atau password salah" });
+//     }
+
+//     const passwordMatch = await bcrypt.compare(password, user.password);
+
+//     if (!passwordMatch) {
+//       return res.status(401).json({ msg: "Username atau password salah" });
+//     }
+
+//     res.status(200).json({ msg: "Login berhasil" });
+//   } catch (error) {
+//     console.error(error.message);
+//     res.status(500).json({ msg: "Internal Server Error" });
+//   }
+// };
 
 export const logoutUser = async (req, res) => {
   const refreshToken = req.cookies.refreshToken;

@@ -5,20 +5,32 @@ import {
   loginUser,
   logoutUser,
 } from "../../controllers/admin/UserControllerAdmin.js";
+
 import {
-  getMenu,
-  getMenuById,
-  createMenu,
-  updateMenu,
-  deleteMenu,
-} from "../../controllers/admin/MenuControllerAdmin.js";
+  getAllDestinations,
+  getDestinationById,
+  createDestination,
+  updateDestination,
+  deleteDestination,
+} from '../../controllers/admin/DestinationController.js'; 
+
 import {
-  getBerita,
-  getBeritaById,
-  createBerita,
-  updateBerita,
-  deleteBerita,
-} from "../../controllers/admin/BeritaControllerAdmin.js";
+  getAllNews,
+  getNewsById,
+  createNews,
+  updateNews,
+  deleteNews,
+} from '../../controllers/admin/NewsController.js';
+
+import {
+  getAllLetterRequests,
+  getLetterRequestById,
+  createLetterRequest,
+  updateLetterRequest,
+  deleteLetterRequest,
+} from '../../controllers/admin/LetterRequestController.js'; 
+
+
 import { refreshToken } from "../../controllers/admin/RefreshTokenAdmin.js";
 import { verifyToken } from "../../middleware/admin/VerifyToken.js";
 
@@ -31,18 +43,27 @@ router.post("/api/auth/login", loginUser);
 router.get("/api/auth/token", refreshToken);
 router.delete("/api/auth/logout", logoutUser);
 
-// router menu
-router.get("/api/menus", getMenu);
-router.get("/api/menu/:id", getMenuById);
-router.post("/api/menu/create", createMenu);
-router.patch("/api/menu/edit/:id", updateMenu);
-router.delete("/api/menu/delete/:id", deleteMenu);
+// Destination Routes
+router.get('/destinations', getAllDestinations);
+router.get('/destinations/:destination_id', getDestinationById);
+router.post('/destinations', createDestination);
+router.put('/destinations/:destination_id', updateDestination);
+router.delete('/destinations/:destination_id', deleteDestination);
 
-// router berita
-router.get("/api/berita", getBerita);
-router.get("/api/berita/:id", getBeritaById);
-router.post("/api/berita/create", createBerita);
-router.patch("/api/berita/edit/:id", updateBerita);
-router.delete("/api/berita/delete/:id", deleteBerita);
+// News Routes
+router.get('/news', getAllNews);
+router.get('/news/:news_id', getNewsById);
+router.post('/news', createNews);
+router.put('/news/:news_id', updateNews);
+router.delete('/news/:news_id', deleteNews);
+
+// LetterRequest Routes
+router.get('/letter-requests', getAllLetterRequests);
+router.get('/letter-requests/:request_id', getLetterRequestById);
+router.post('/letter-requests', createLetterRequest);
+router.put('/letter-requests/:request_id', updateLetterRequest);
+router.delete('/letter-requests/:request_id', deleteLetterRequest);
+
+
 
 export default router;
