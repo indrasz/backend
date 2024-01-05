@@ -4,8 +4,8 @@ import path from 'path';
 import fs from 'fs/promises';
 
 const prisma = new PrismaClient();
-// Set storage engineck file type
 
+// Set storage engineck file type
 const storage = multer.diskStorage({
     destination: async function (req, file, cb) {
         try {
@@ -28,24 +28,45 @@ const storage = multer.diskStorage({
 
 const upload = multer({
     storage: storage,
-    limits: { fileSize: 1000000 }, // Adjust as needed (1 MB in this example)
+    limits: { fileSize: 1000000 }, 
 }).single('thumbnail');
 
 export const getAllNews = async (req, res) => {
     try {
-        const news = await prisma.news.findMany({
-            select: {
-                news_id: true,
-                title: true,
-                content: true,
-                category: true,
-                thumbnail: true,
-                author: true,
-                createdAt: true,
-                updatedAt: true,
-            },
+        // Menangani upload gambar
+        upload(req, res, async function (err) {
+            if (err) {
+                console.error('File Upload Error:', err);
+
+                if (err instanceof multer.MulterError) {
+                    // Handle specific Multer errors
+                    return res.status(400).json({ msg: 'MulterError: ' + err.message });
+                }
+
+                return res.status(400).json({ msg: 'Error uploading file.' });
+            }
+
+            // Jika upload berhasil, lanjutkan mendapatkan data berita
+            const news = await prisma.news.findMany({
+                select: {
+                    news_id: true,
+                    title: true,
+                    content: true,
+                    category: true,
+                    thumbnail: true,
+                    author: true,
+                    createdAt: true,
+                    updatedAt: true,
+                },
+            });
+
+            const newsWithFullThumbnailPath = news.map((item) => ({
+                ...item,
+                thumbnail: path.resolve(item.thumbnail), // Menggunakan path.resolve untuk mendapatkan path absolut
+            }));
+
+            res.status(200).json(newsWithFullThumbnailPath);
         });
-        res.status(200).json(news);
     } catch (error) {
         res.status(500).json({ msg: error.message });
     }
@@ -99,8 +120,6 @@ export const createNews = async (req, res) => {
 };
 
 export const updateNews = async (req, res) => {
-    const { news_id } = req.params;
-    const { title, content, author, category, source } = req.body;
 
     upload(req, res, async function (err) {
         if (err) {
@@ -113,6 +132,9 @@ export const updateNews = async (req, res) => {
 
             return res.status(400).json({ msg: 'Error uploading file.' });
         }
+
+        const { news_id } = req.params;
+        const { title, content, author, category, source } = req.body;
 
         const updatedData = {
             title,

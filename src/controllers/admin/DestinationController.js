@@ -93,9 +93,7 @@ export const createDestination = async (req, res) => {
 };
 
 export const updateDestination = async (req, res) => {
-    const { destination_id } = req.params;
-    const { name, description, location, category } = req.body;
-
+ 
     upload(req, res, async function (err) {
         if (err) {
             console.error('File Upload Error:', err);
@@ -107,6 +105,9 @@ export const updateDestination = async (req, res) => {
 
             return res.status(400).json({ msg: 'Error uploading file.' });
         }
+
+        const { destination_id } = req.params;
+        const { name, description, location, category } = req.body;
 
         const updatedData = {
             name,

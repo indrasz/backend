@@ -28,7 +28,13 @@ import {
   createLetterRequest,
   updateLetterRequest,
   deleteLetterRequest,
+  downloadLetterRequestPdf
 } from '../../controllers/admin/LetterRequestController.js'; 
+
+// import {
+//   downloadRouter
+// } from '../../controllers/admin/DownloadPDFController.js';
+
 
 
 import { refreshToken } from "../../controllers/admin/RefreshTokenAdmin.js";
@@ -63,7 +69,6 @@ router.get('/letter-requests/:request_id', getLetterRequestById);
 router.post('/letter-requests', createLetterRequest);
 router.put('/letter-requests/:request_id', updateLetterRequest);
 router.delete('/letter-requests/:request_id', deleteLetterRequest);
-
-
+router.get('/letter-requests/download/:request_id', downloadLetterRequestPdf);
 
 export default router;

@@ -27,6 +27,34 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage: storage }).single('pdf_file');
 
+export const downloadLetterRequestPdf = async (req, res) => {
+    const { request_id } = req.params;
+
+    try {
+        const letterRequest = await prisma.letterRequest.findUnique({
+            where: { request_id },
+            select: { pdf_file: true },
+        });
+
+        if (!letterRequest) {
+            return res.status(404).json({ msg: 'Letter request not found' });
+        }
+
+        const pdfFilePath = letterRequest.pdf_file;
+
+        if (!pdfFilePath) {
+            return res.status(404).json({ msg: 'PDF file not found for the letter request' });
+        }
+
+        const absolutePath = path.resolve(pdfFilePath);
+
+        res.download(absolutePath);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ msg: 'Internal Server Error' });
+    }
+};
+
 export const getAllLetterRequests = async (req, res) => {
     try {
         const letterRequests = await prisma.letterRequest.findMany({
@@ -73,8 +101,9 @@ export const createLetterRequest = async (req, res) => {
             return res.status(400).json({ msg: 'Error uploading file.' });
         }
 
-        const { requester_name, requester_nik, letter_type, purpose, status } = req.body;
+        const { requester_name, requester_nik, letter_type, purpose } = req.body;
         const pdf_file = req.file ? req.file.path : null;
+        const status = "PENDING";
 
         try {
             const newLetterRequest = await prisma.letterRequest.create({
@@ -95,8 +124,6 @@ export const createLetterRequest = async (req, res) => {
 };
 
 export const updateLetterRequest = async (req, res) => {
-    const { request_id } = req.params;
-    const { requester_name, requester_nik, letter_type, purpose, status } = req.body;
 
     upload(req, res, async function (err) {
         if (err) {
@@ -109,6 +136,9 @@ export const updateLetterRequest = async (req, res) => {
 
             return res.status(400).json({ msg: 'Error uploading file.' });
         }
+
+        const { request_id } = req.params;
+        const { requester_name, requester_nik, letter_type, purpose, status } = req.body;
 
         const updatedData = {
             requester_name,
